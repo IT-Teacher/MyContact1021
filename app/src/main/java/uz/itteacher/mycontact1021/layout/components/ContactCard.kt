@@ -1,5 +1,6 @@
 package uz.itteacher.mycontact1021.layout.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import uz.itteacher.mycontact1021.model.MyContact
 
 @Composable
-fun ContactCard(contact: MyContact){
+fun ContactCard(contact: MyContact, onCallClick: (id:Int) -> Unit){
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -29,7 +30,10 @@ fun ContactCard(contact: MyContact){
     ){
         val fullName = "${contact.name} ${contact.surname}"
         Row (
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth(0.9f).clickable {
+                onCallClick(contact.id)
+            }
         ){
             Icon(imageVector = Icons.Default.AccountCircle,
                 contentDescription = null,

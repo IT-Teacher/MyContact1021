@@ -40,8 +40,8 @@ import uz.itteacher.mycontact1021.db.AppDataBase
 import uz.itteacher.mycontact1021.layout.components.ContactCard
 
 @Composable
-fun MainContactScreen(navController: NavHostController,appDataBase: AppDataBase) {
-    val myContactList = appDataBase.myContactDao().getAllContacts()
+fun MainContactScreen(navController: NavHostController, appDataBase: AppDataBase) {
+    val myContactList = appDataBase.myContactDao().getAllContacts().sortedBy { it.name }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(
@@ -49,10 +49,10 @@ fun MainContactScreen(navController: NavHostController,appDataBase: AppDataBase)
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                text = "Contacts",
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold
-            )
+                    text = "Contacts",
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold
+                )
                 Row() {
                     Icon(
                         Icons.Default.Search,
@@ -73,8 +73,6 @@ fun MainContactScreen(navController: NavHostController,appDataBase: AppDataBase)
                 }
 
 
-
-
             }
             if (myContactList.isEmpty()) {
                 Box(
@@ -93,28 +91,36 @@ fun MainContactScreen(navController: NavHostController,appDataBase: AppDataBase)
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(myContactList){
-                    contact ->
-                    ContactCard(contact)
+                items(myContactList) { contact ->
+                    ContactCard(contact, onCallClick = {
+                        navController.navigate("create_contact/${contact.id}")
+                    })
                 }
             }
-
-
         }
-        Row(modifier = Modifier.fillMaxSize().clickable{navController.navigate("create_contact")},
-            horizontalArrangement = Arrangement.End) {
-            FloatingActionButton(
-                onClick = {navController.navigate("create_contact")
-                },
-                modifier = Modifier.padding(16.dp).align(Alignment.Bottom),
-                containerColor = Color(0xFF2196F3)
-            ) {
 
-                Icon(Icons.Default.Add,
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp),
-                    contentDescription = null,)
-            }
+
+    }
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.End
+    ) {
+        FloatingActionButton(
+            onClick = {
+                navController.navigate("create_contact")
+            },
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.Bottom),
+            containerColor = Color(0xFF2196F3)
+        ) {
+
+            Icon(
+                Icons.Default.Add,
+                tint = Color.White,
+                modifier = Modifier.size(24.dp),
+                contentDescription = null,
+            )
         }
     }
 }
