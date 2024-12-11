@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import uz.itteacher.mycontact1021.db.AppDataBase
 import uz.itteacher.mycontact1021.layout.MainContactScreen
 import uz.itteacher.mycontact1021.navigation.NavHostContainer
 import uz.itteacher.mycontact1021.ui.theme.MyContact1021Theme
@@ -18,6 +19,7 @@ import uz.itteacher.mycontact1021.ui.theme.MyContact1021Theme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        val appDataBase = AppDataBase.getInstance(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -25,7 +27,7 @@ class MainActivity : ComponentActivity() {
                 Column(modifier = Modifier.fillMaxSize().padding(vertical = 70.dp,
                     horizontal = 16.dp)) {
                     NavHostContainer(
-                        navController = rememberNavController(), startDestination = "home_screen")
+                        navController = rememberNavController(), startDestination = "home_screen", appDataBase)
                 }
 
             }

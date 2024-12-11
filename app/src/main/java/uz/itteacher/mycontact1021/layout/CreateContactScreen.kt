@@ -33,25 +33,37 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
+import uz.itteacher.mycontact1021.db.AppDataBase
+import uz.itteacher.mycontact1021.model.MyContact
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateContactScreen(navController: NavController) {
+fun CreateContactScreen(navController: NavController, appDataBase: AppDataBase) {
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
 
 
-        Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Row() {
                 Icon(
                     Icons.Default.ArrowBack,
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier.clickable {
+                        navController.navigate("home_screen")
+                    }
                 )
                 Spacer(modifier = Modifier.width(30.dp))
                 Text(
@@ -64,8 +76,18 @@ fun CreateContactScreen(navController: NavController) {
             Icon(
                 Icons.Default.Check,
                 contentDescription = null,
-                modifier = Modifier.clickable{
-                    navController.navigate("home_screen")
+                modifier = Modifier.clickable {
+                    if (isValid(name, phone)) {
+                        appDataBase.myContactDao().addContact(
+                            MyContact(
+                                name = name,
+                                surname = surname,
+                                phoneNumber = phone,
+                                image = ""
+                            )
+                        )
+                        navController.navigate("home_screen")
+                    }
                 }
             )
 
@@ -79,8 +101,10 @@ fun CreateContactScreen(navController: NavController) {
         )
         TextField(
             value = name,
-            onValueChange = {name = it},
-            modifier = Modifier.fillMaxWidth().border(1.dp, Color.Gray, RoundedCornerShape(5.dp)),
+            onValueChange = { name = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color.Gray, RoundedCornerShape(5.dp)),
             placeholder = { Text(text = "Enter Name") },
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Color.LightGray,
@@ -96,8 +120,10 @@ fun CreateContactScreen(navController: NavController) {
         )
         TextField(
             value = surname,
-            onValueChange = {surname = it},
-            modifier = Modifier.fillMaxWidth().border(1.dp, Color.Gray, RoundedCornerShape(5.dp)),
+            onValueChange = { surname = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color.Gray, RoundedCornerShape(5.dp)),
             placeholder = { Text(text = "Enter surame") },
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Color.LightGray,
@@ -113,8 +139,10 @@ fun CreateContactScreen(navController: NavController) {
         )
         TextField(
             value = phone,
-            onValueChange = {phone = it},
-            modifier = Modifier.fillMaxWidth().border(1.dp, Color.Gray, RoundedCornerShape(5.dp)),
+            onValueChange = { phone = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color.Gray, RoundedCornerShape(5.dp)),
             placeholder = { Text(text = "+998 __ ___ __ __") },
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Color.LightGray,
@@ -129,5 +157,27 @@ fun CreateContactScreen(navController: NavController) {
             )
         )
     }
+}
+
+fun isValid(name: String, phone: String): Boolean {
+    if (name.isEmpty() || phone.isEmpty()) {
+        return false
+    }
+
+    if (phone.length != 13) {
+        return false
+    }
+
+    if (!phone.startsWith("+998")) {
+        return false
+    }
+
+    if (!phone.substring(1).isDigitsOnly()) {
+        return false
+    }
+
+
+    return true
+
 }
 
