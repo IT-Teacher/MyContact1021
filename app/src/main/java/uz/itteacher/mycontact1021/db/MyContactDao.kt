@@ -12,7 +12,7 @@ interface MyContactDao {
     fun getAllContacts(): List<MyContact>
 
     @Query("SELECT * FROM my_contacts WHERE id = :id")
-    fun getContactById(id: Int): MyContact?
+    fun getContactById(id: Int): MyContact
 
     @Query("DELETE FROM my_contacts WHERE id = :id")
     fun deleteContactById(id: Int)

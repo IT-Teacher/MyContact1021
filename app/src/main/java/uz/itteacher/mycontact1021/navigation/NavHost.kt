@@ -21,8 +21,8 @@ fun NavHostContainer (navController: NavHostController, startDestination: String
             CreateContactScreen(navController , appDataBase)
     }
         composable("create_contact/{id}") {navBackStackEntry ->
-            val id = navBackStackEntry.arguments?.getInt("id")
-            InfoContactScreen(navController , appDataBase, id!!)
+            val id = navBackStackEntry.arguments?.getString("id")
+            InfoContactScreen(navController , appDataBase, id!!.toInt())
         }
     }
 }
