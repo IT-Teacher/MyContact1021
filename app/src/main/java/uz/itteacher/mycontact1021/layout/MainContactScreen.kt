@@ -93,7 +93,7 @@ fun MainContactScreen(navController: NavHostController, appDataBase: AppDataBase
             ) {
                 items(myContactList) { contact ->
                     ContactCard(contact, onCallClick = {
-                        navController.navigate("create_contact/${contact.id}")
+                        navController.navigate("info_contact/${contact.id}")
                     })
                 }
             }
@@ -107,7 +107,7 @@ fun MainContactScreen(navController: NavHostController, appDataBase: AppDataBase
     ) {
         FloatingActionButton(
             onClick = {
-                navController.navigate("create_contact")
+                navController.navigate("create_contact/-1")
             },
             modifier = Modifier
                 .padding(16.dp)

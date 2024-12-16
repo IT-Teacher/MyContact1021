@@ -17,10 +17,11 @@ fun NavHostContainer (navController: NavHostController, startDestination: String
         composable("home_screen") {
             MainContactScreen(navController, appDataBase)
         }
-        composable("create_contact") {
-            CreateContactScreen(navController , appDataBase)
-    }
         composable("create_contact/{id}") {navBackStackEntry ->
+            val id = navBackStackEntry.arguments?.getString("id")
+            CreateContactScreen(navController , appDataBase, id!!.toInt())
+    }
+        composable("info_contact/{id}") {navBackStackEntry ->
             val id = navBackStackEntry.arguments?.getString("id")
             InfoContactScreen(navController , appDataBase, id!!.toInt())
         }
