@@ -1,6 +1,7 @@
 package uz.itteacher.mycontact1021.layout
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -24,7 +26,11 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,6 +48,9 @@ import uz.itteacher.mycontact1021.layout.components.ContactCard
 @Composable
 fun MainContactScreen(navController: NavHostController, appDataBase: AppDataBase) {
     val myContactList = appDataBase.myContactDao().getAllContacts().sortedBy { it.name }
+    val isSearchActive = remember { mutableStateOf(false) }
+    val searchQuery = remember { mutableStateOf("") }
+    val sortedList =  if(searchQuery.value.isNotBlank() && searchQuery.value.isNotEmpty()) myContactList.filter { it.name.contains(searchQuery.value, ignoreCase = true) } else myContactList
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(
@@ -58,7 +67,7 @@ fun MainContactScreen(navController: NavHostController, appDataBase: AppDataBase
                         Icons.Default.Search,
                         contentDescription = null,
                         modifier = Modifier.clickable {
-
+                            isSearchActive.value = !isSearchActive.value
                         }
                     )
                     Spacer(modifier = Modifier.width(10.dp))
@@ -73,6 +82,29 @@ fun MainContactScreen(navController: NavHostController, appDataBase: AppDataBase
                 }
 
 
+            }
+            if(isSearchActive.value){
+                Spacer(Modifier.height(12.dp))
+                TextField(
+                    value = searchQuery.value,
+                    onValueChange = {
+                        searchQuery.value = it
+                    },
+                    placeholder = {
+                        Text("Search...",
+                            color = Color.Gray)
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(2.dp, Color.Black, RoundedCornerShape(12.dp)),
+                )
             }
             if (myContactList.isEmpty()) {
                 Box(
@@ -91,7 +123,7 @@ fun MainContactScreen(navController: NavHostController, appDataBase: AppDataBase
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(myContactList) { contact ->
+                items(sortedList) { contact ->
                     ContactCard(contact, onCallClick = {
                         navController.navigate("info_contact/${contact.id}")
                     })
